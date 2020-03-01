@@ -1,3 +1,8 @@
+// Sources:
+// https://www.openprocessing.org/sketch/748916 
+// https://www.openprocessing.org/sketch/178381
+
+
 import processing.serial.*;
 Serial myPort;  // Create object from Serial class
 String val;     // Data received from the serial port
@@ -11,6 +16,7 @@ boolean onPressed, showInstruction;
 PFont f;
 float scale;
 float middle;
+float sketch_size = 720; // obs change in setup - size
 // =============================================================
  
 
@@ -38,29 +44,38 @@ void setup() {
 
 void draw() {
   if ( myPort.available() > 0) {
-    //val = myPort.readStringUntil('\n'); 
     val = myPort.readString(); 
-    //println(val);
+    println("TEST: ", val);
     
-    String[] new_val = split(val, "-");
-    //println(new_val.length);
+    String[] new_val = split(val, ":"); // split incoming data at hyphens
     if(new_val[0].trim().contains( "ACC") && new_val.length == 5){
       x = (float(new_val[1]));
       y = (float(new_val[2]));
       z = (float(new_val[3]));
-      println("X: ", x);// read it and store it in val
-      println("Y: ", y);// read it and store it in val
-      println("Z: ", z);// read it and store it in val
+      println("X: ", x);
+      //println("Y: ", y);
+      println("Z: ", z);
     }
     
     // ======================= Visualization =======================
-    //middle = 720/2; // sketch size divided in half
-    //scale = x*middle*6;
+    middle = sketch_size/2; //sketch size divided in half
     scale = x*middle*100;
     
-    for (int i=0;i<10;i++) {
-      Particle newP = new Particle(x*scale, y*scale, i+pts.size(), i+pts.size());
-      pts.add(newP);
+    for (int i=0;i<1;i++) { //number of particles created?
+      if (x > 0 || x < -2.0 && z > 0) {  // looking down
+        println("ENTERED!");
+        Particle newP = new Particle(-(x/(-9.4))*middle, -(x/(-9.4))*middle, i+pts.size(), i+pts.size());  // y coordinate
+        pts.add(newP);
+      }
+      else if (x > 0 || x < -2 && z < 0) {  // looking up
+        Particle newP = new Particle((x/(-9.4))*middle, (x/(-9.4))*middle, i+pts.size(), i+pts.size()); 
+        pts.add(newP);
+      }
+      else {
+        println("ENTER MIDDLE");
+        Particle newP = new Particle((x/(-9.4))*middle, (x/x)*(middle), i+pts.size(), i+pts.size());  
+        pts.add(newP);
+      }
     }
  
     for (int i=0; i<pts.size(); i++) {
@@ -87,6 +102,8 @@ void draw() {
 //}
 
 // ======================= Visualization ======================= 
+
+// REMOVE?
 void keyPressed() {
   if (key == 'c') {
     for (int i=pts.size()-1; i>-1; i--) {
@@ -114,7 +131,7 @@ class Particle{
     acc = new PVector(0,0);
     lifeSpan = int(random(30, 90));
     decay = random(0.75, 0.9);
-    c = color(random(255),random(255),255);
+    c = color(random(255),random(255),255); // ADD map, color change with z values
     weightRange = random(3,50);
      
     this.xOffset = xOffset;
@@ -160,4 +177,13 @@ class Particle{
     point(loc.x, loc.y);
   }
 }
+
+//color getColorByTheta(float theta, float time) {
+//  float th = 8.0 * theta + time * 2.0;
+//  float r = 0.6 + 0.4 * cos(th), 
+//    g = 0.6 + 0.4 * cos(th - PI / 3), 
+//    b = 0.6 + 0.4 * cos(th - PI * 2.0 / 3.0), 
+//    alpha = map(circleCnt, MIN_CIRCLE_CNT, MAX_CIRCLE_CNT, 150, 30); //map(value, start1, stop1, start2, stop2) -> https://processing.org/reference/map_.html
+//  return color(r * 255, g * 255, b * 255, alpha);
+//}
 // =============================================================
