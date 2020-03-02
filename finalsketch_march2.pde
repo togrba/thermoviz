@@ -139,7 +139,7 @@ class Particle{
     acc = new PVector(0,0);
     lifeSpan = int(random(30, 90));
     decay = random(0.75, 0.9);
-    c = color(random(255),random(255),255); // ADD map, color change with z values
+    c = color(random(255),random(255),random(255)); // ADD map, color change with z values
     weightRange = random(3,50);
      
     this.xOffset = xOffset;
@@ -180,7 +180,7 @@ class Particle{
     stroke(0, alpha);
     point(loc.x, loc.y);
      
-    strokeWeight(weight);
+    strokeWeight(weight+1);
     stroke(c);
     point(loc.x, loc.y);
   }
