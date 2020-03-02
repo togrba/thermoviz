@@ -44,36 +44,39 @@ void setup() {
 
 void draw() {
   if ( myPort.available() > 0) {
-    val = myPort.readString(); 
-    println("TEST: ", val);
+    val = myPort.readString();
     
     String[] new_val = split(val, ":"); // split incoming data at hyphens
     if(new_val[0].trim().contains( "ACC") && new_val.length == 5){
       x = (float(new_val[1]));
       y = (float(new_val[2]));
       z = (float(new_val[3]));
-      println("X: ", x);
-      //println("Y: ", y);
-      println("Z: ", z);
+      println("GOOD X: ", x);
+      println("GOOD Y: ", y);
+      println("GOOD Z: ", z);
     }
     
     // ======================= Visualization =======================
     middle = sketch_size/2; //sketch size divided in half
     scale = x*middle*100;
     
-    for (int i=0;i<1;i++) { //number of particles created?
-      if (x > 0 || x < -2.0 && z > 0) {  // looking down
-        println("ENTERED!");
-        Particle newP = new Particle(-(x/(-9.4))*middle, -(x/(-9.4))*middle, i+pts.size(), i+pts.size());  // y coordinate
+    for (int i=0;i<100;i++) { //number of particles created
+      if (x > -5 && x < 5 && z > 0) {  // middle
+        //println("Middle");
+        //println("X: ", x, "Z: ", z);
+        Particle newP = new Particle((x/9.4)*middle*4, (x/9.4)*middle*4, i+pts.size(), i+pts.size());  // y coordinate
         pts.add(newP);
       }
-      else if (x > 0 || x < -2 && z < 0) {  // looking up
-        Particle newP = new Particle((x/(-9.4))*middle, (x/(-9.4))*middle, i+pts.size(), i+pts.size()); 
+      else if (x > 8 && x < 15 && z < 0) {  // looking down
+        //println("Looking down");
+        //println("X: ", x, "Z: ", z);
+        Particle newP = new Particle((x/(9.4))*middle/11, (x/(9.4))*middle/11, i+pts.size(), i+pts.size()); 
         pts.add(newP);
       }
-      else {
-        println("ENTER MIDDLE");
-        Particle newP = new Particle((x/(-9.4))*middle, (x/x)*(middle), i+pts.size(), i+pts.size());  
+      else if (x < -8 && x > -15 && z < 0) { 
+        //println("Looking up"); //x=10 z=neg
+        //println("X: ", x, "Z: ", z);
+        Particle newP = new Particle(-(-x/(9.4))*middle/11, -(-x/(9.4))*middle/11, i+pts.size(), i+pts.size());  
         pts.add(newP);
       }
     }
@@ -103,16 +106,16 @@ void draw() {
 
 // ======================= Visualization ======================= 
 
-// REMOVE?
-void keyPressed() {
-  if (key == 'c') {
-    for (int i=pts.size()-1; i>-1; i--) {
-      Particle p = pts.get(i);
-      pts.remove(i);
-    }
-    background(255);
-  }
-}
+//// REMOVE?
+//void keyPressed() {
+//  if (key == 'c') {
+//    for (int i=pts.size()-1; i>-1; i--) {
+//      Particle p = pts.get(i);
+//      pts.remove(i);
+//    }
+//    background(255);
+//  }
+//}
  
 class Particle{
   PVector loc, vel, acc;
